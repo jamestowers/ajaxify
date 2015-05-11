@@ -19,12 +19,12 @@
 		// Prepare Variables
 		var
 			/* Application Specific Variables */
-			contentSelector = '#content,article:first,.article:first,.post:first',
+			contentSelector = '#content',
 			$content = $(contentSelector).filter(':first'),
 			contentNode = $content.get(0),
-			$menu = $('#menu,#nav,nav:first,.nav:first').filter(':first'),
-			activeClass = 'active selected current youarehere',
-			activeSelector = '.active,.selected,.current,.youarehere',
+			$menu = $('nav:first').filter(':first'),
+			activeClass = 'current-menu-item',
+			activeSelector = '.current-menu-item',
 			menuChildrenSelector = '> li,> ul > li',
 			completedEventName = 'statechangecomplete',
 			/* Application Generic Variables */
@@ -32,7 +32,7 @@
 			$body = $(document.body),
 			rootUrl = History.getRootUrl(),
 			scrollOptions = {
-				duration: 800,
+				duration: 400,
 				easing:'swing'
 			};
 		
@@ -112,7 +112,10 @@
 			// Start Fade Out
 			// Animating to opacity to 0 still keeps the element's height intact
 			// Which prevents that annoying pop bang issue when loading in new content
-			$content.animate({opacity:0},800);
+			$content.addClass('load-out');//
+			if( Modernizr && !Modernizr.csstransitions){	
+				$content.animate({opacity:0},200);
+			}
 			
 			// Ajax Request the Traditional Page
 			$.ajax({
@@ -146,7 +149,11 @@
 
 					// Update the content
 					$content.stop(true,true);
-					$content.html(contentHtml).ajaxify().css('opacity',100).show(); /* you could fade in here if you'd like */
+					$content.html(contentHtml).ajaxify().removeClass('load-out');
+					
+					if( Modernizr && !Modernizr.csstransitions){
+						$content.css('opacity',100).show(); /* you could fade in here if you'd like */
+					}
 
 					// Update the title
 					document.title = $data.find('.document-title:first').text();
